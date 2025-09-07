@@ -1,14 +1,12 @@
 #!/usr/bin/env node
 
-/**
- * GitHub Task - Main application entry point
- */
+import { Command } from '@commander-js/extra-typings';
 
-export function main(): void {
-  console.log('GitHub Task Manager v1.0.0');
-  console.log('Ready to manage your GitHub tasks!');
-}
+const program = new Command();
 
-if (require.main === module) {
-  main();
-}
+program
+  .name('gh-task')
+  .description('Intelligent GitHub task management CLI with AI-powered assistance')
+  .version('0.1.0');
+
+program.parse();
