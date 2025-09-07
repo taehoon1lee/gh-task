@@ -1,5 +1,5 @@
 import { Command } from '@commander-js/extra-typings';
-import { GlobalOptions } from '../types.js';
+import { GlobalOptions } from '../types';
 
 export function createBaseCommand(name: string, description: string): Command {
   const command = new Command(name);
