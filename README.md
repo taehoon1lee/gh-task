@@ -98,7 +98,7 @@ github-task/
 #### Type Definitions (`src/types.ts`)
 - `GlobalOptions` - CLI global flags interface
 - `CommandContext` - Command execution context
-- `TaskData` - Task management data structure  
+- `TaskData` - Task management data structure
 - `Config` - Application configuration interface
 
 #### Command Factory (`src/utils/command-factory.ts`)
