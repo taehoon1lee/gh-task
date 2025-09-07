@@ -48,11 +48,16 @@ GitHub Task Manager (gh-task)
 
 #### 3.1 핵심 의존성
 - **GitHub CLI (`gh`)**: GitHub API 상호작용
-- **Programming Language**: Go 또는 Rust (성능 고려)
-- **Database**: SQLite (로컬 캐싱)
-- **Configuration**: YAML/TOML
-- **AI Integration**: OpenAI API 또는 로컬 LLM (Ollama)
-- **NLP Library**: 텍스트 분석 및 처리
+- **Programming Language**: Node.js with TypeScript (빠른 개발 및 생태계 활용)
+- **Database**: SQLite (로컬 캐싱) - better-sqlite3 패키지 사용
+- **Configuration**: YAML/JSON
+- **AI Integration**: OpenAI API, Anthropic Claude, 또는 로컬 LLM (Ollama)
+- **CLI Framework**: Commander.js (TypeScript 지원 포함)
+- **개발 도구**: 
+  - ESLint & Prettier (코드 품질 관리)
+  - TypeScript (타입 안정성)
+  - Nodemon & ts-node (개발 환경)
+  - Jest (테스팅 프레임워크)
 
 #### 3.2 API
 - GitHub REST API v3
@@ -370,31 +375,120 @@ CREATE TABLE templates (
 - IDE 플러그인
 - Slack/Discord 알림
 
-### 11. 로드맵
+### 11. 구현 아키텍처
 
-#### Phase 1 (MVP) - 4주
-- 기본 CRUD 작업
+#### 11.1 프로젝트 구조
+```
+github-task/
+├── src/                    # TypeScript 소스 코드
+│   ├── index.ts           # 메인 진입점
+│   ├── commands/          # CLI 명령어 구현
+│   ├── services/          # 비즈니스 로직
+│   │   ├── github/        # GitHub CLI 래퍼
+│   │   ├── cache/         # SQLite 캐싱 레이어
+│   │   ├── sync/          # 동기화 엔진
+│   │   └── ai/            # AI 통합 서비스
+│   ├── models/            # TypeScript 인터페이스 및 타입
+│   └── utils/             # 유틸리티 함수
+├── lib/                    # 컴파일된 JavaScript
+├── bin/                    # 실행 가능한 스크립트
+├── tests/                  # Jest 테스트 파일
+├── .taskmaster/           # Task Master 통합
+└── docs/                  # 문서
+
+```
+
+#### 11.2 핵심 모듈 구조
+- **CLI Framework Layer**: Commander.js 기반 명령어 처리
+- **GitHub Integration Layer**: gh CLI 래퍼 및 에러 처리
+- **Cache Layer**: SQLite 기반 오프라인 지원
+- **Sync Engine**: 양방향 동기화 및 충돌 해결
+- **AI Services**: 다중 AI 프로바이더 추상화
+- **Search Engine**: SQLite FTS5 기반 전문 검색
+
+#### 11.3 데이터베이스 스키마
+```sql
+-- 캐시된 이슈
+CREATE TABLE cached_issues (
+  id INTEGER PRIMARY KEY,
+  number INTEGER UNIQUE,
+  title TEXT,
+  body TEXT,
+  state TEXT,
+  labels JSON,
+  assignees JSON,
+  milestone JSON,
+  created_at TEXT,
+  updated_at TEXT,
+  synced_at TEXT
+);
+
+-- 동기화 큐
+CREATE TABLE sync_queue (
+  id INTEGER PRIMARY KEY,
+  operation TEXT,
+  entity_type TEXT,
+  entity_id INTEGER,
+  payload JSON,
+  created_at TEXT,
+  retry_count INTEGER DEFAULT 0
+);
+
+-- AI 캐시
+CREATE TABLE ai_cache (
+  id INTEGER PRIMARY KEY,
+  prompt_hash TEXT UNIQUE,
+  response TEXT,
+  provider TEXT,
+  model TEXT,
+  created_at TEXT,
+  ttl INTEGER
+);
+
+-- 템플릿
+CREATE TABLE templates (
+  id INTEGER PRIMARY KEY,
+  name TEXT UNIQUE,
+  content JSON,
+  variables JSON,
+  created_at TEXT,
+  updated_at TEXT
+);
+```
+
+### 12. 로드맵
+
+#### Phase 1 (MVP) - 2주
+- Node.js/TypeScript 프로젝트 초기 설정 및 빌드 시스템 구축
+- Commander.js 기반 CLI 프레임워크 구현
+- GitHub CLI (gh) 통합 레이어 개발
+- 기본 CRUD 작업 (add, list, show, done)
 - `gh` CLI 통합
-- 로컬 캐싱
+- 기본 설정 파일 관리
 
-#### Phase 2 - 4주
-- 오프라인 모드
-- 자동 동기화
-- 템플릿 시스템
-- Next Task 기본 추천
+#### Phase 2 (Core Features) - 2주
+- SQLite (better-sqlite3) 기반 로컬 캐싱 시스템
+- 핵심 작업 관리 명령어 구현 (edit, assign, label, comment 등)
+- 오프라인 모드 및 동기화 큐
 
-#### Phase 3 - 4주
-- 고급 검색
-- PRD 기반 Task 생성
-- Task Research 기능
-- AI 분석 고도화
+#### Phase 3 (Search & Sync) - 2주
+- 고급 검색 및 필터링 (SQLite FTS5)
+- 자동 동기화 엔진 및 충돌 해결
+- 네트워크 연결 감지 및 재시도 메커니즘
 
-#### Phase 4 - 4주
-- 플러그인 시스템
-- 성능 최적화
-- 머신러닝 기반 추천 개선
+#### Phase 4 (AI Integration) - 3주
+- AI 프로바이더 추상화 (OpenAI, Claude, Ollama)
+- Next Task 추천 시스템
+- PRD 파싱 및 작업 자동 생성
+- Task Research 및 복잡도 분석
 
-### 12. 성공 지표
+#### Phase 5 (Advanced Features) - 2주
+- 템플릿 시스템 및 일괄 작업 처리
+- 의존성 추적 및 그래프 시각화
+- GitHub Projects V2 통합
+- 웹훅 및 실시간 업데이트
+
+### 13. 성공 지표
 
 - 일일 활성 사용자 수
 - 평균 명령어 실행 시간
@@ -408,18 +502,18 @@ CREATE TABLE templates (
 - 의존성 검증 성공률
 - 일괄 작업 처리 시간
 
-### 13. 위험 요소 및 대응
+### 14. 위험 요소 및 대응
 
-#### 13.1 기술적 위험
+#### 14.1 기술적 위험
 - **GitHub API 제한**: 캐싱 및 배치 처리로 대응
 - **동기화 충돌**: 충돌 해결 UI 제공
 - **성능 저하**: 인덱싱 및 쿼리 최적화
 
-#### 13.2 사용자 경험 위험
+#### 14.2 사용자 경험 위험
 - **학습 곡선**: 상세한 문서 및 튜토리얼 제공
 - **기존 도구와의 차별화**: 독특한 기능 추가
 
-#### 13.3 AI 관련 위험
+#### 14.3 AI 관련 위험
 - **API 비용**: 로컬 LLM 옵션 제공
 - **부정확한 추천**: 사용자 피드백 루프 구현
 - **개인정보 보호**: 민감 데이터 필터링
