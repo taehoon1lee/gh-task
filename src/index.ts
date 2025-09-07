@@ -27,10 +27,10 @@ program.exitOverride();
 try {
   program.parse(process.argv);
 } catch (err: unknown) {
-  if (err instanceof Error && err.name === 'CommanderError') {
+  if (err instanceof CommanderError) {
     console.error(err.message);
-    process.exit(1);
+  } else {
+    console.error('An unexpected error occurred:', err);
   }
-  console.error('An unexpected error occurred:', err);
   process.exit(1);
 }
