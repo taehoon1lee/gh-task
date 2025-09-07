@@ -1,0 +1,50 @@
+{
+  "name": "github-task",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "bin": {
+    "github-task": "./bin/github-task"
+  },
+  "scripts": {
+    "start": "node lib/index.js",
+    "dev": "nodemon",
+    "dev:ts": "ts-node src/index.ts",
+    "build": "npm run clean && tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rimraf lib",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts",
+    "precommit": "npm run lint && npm run build",
+    "prepare": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taehoon1lee/gh-task.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/taehoon1lee/gh-task/issues"
+  },
+  "homepage": "https://github.com/taehoon1lee/gh-task#readme",
+  "description": "GitHub task management tool",
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "@typescript-eslint/eslint-plugin": "^8.42.0",
+    "@typescript-eslint/parser": "^8.42.0",
+    "eslint": "^9.35.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}
