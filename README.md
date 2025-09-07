@@ -58,11 +58,18 @@ gh-task --version
 npm run dev:ts -- [command] [options]
 ```
 
-### Global Options
+### Available Options
 
-- `-c, --config <path>` - Path to configuration file
-- `-v, --verbose` - Enable verbose output  
-- `--offline` - Work in offline mode
+Currently available options:
+- `-V, --version` - Output the version number
+- `-h, --help` - Display help for command
+
+### Planned Global Options (Coming in Phase 2)
+
+The following global options are planned but not yet implemented:
+- `-c, --config <path>` - Path to configuration file *(planned)*
+- `-v, --verbose` - Enable verbose output *(planned)*
+- `--offline` - Work in offline mode *(planned)*
 
 ## Architecture
 
