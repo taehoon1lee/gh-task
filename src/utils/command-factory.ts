@@ -22,10 +22,10 @@ export function addGlobalOptions(command: Command): Command {
 }
 
 export function extractGlobalOptions(command: Command): GlobalOptions {
-  const opts = command.opts() as Partial<GlobalOptions>;
+  const opts: any = command.opts();
   return {
-    config: opts.config,
-    verbose: opts.verbose || false,
-    offline: opts.offline || false,
+    config: typeof opts.config === 'string' ? opts.config : undefined,
+    verbose: Boolean(opts.verbose),
+    offline: Boolean(opts.offline),
   };
 }
