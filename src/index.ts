@@ -28,6 +28,7 @@ try {
   program.parse(process.argv);
 } catch (err: unknown) {
   if (err instanceof Error && err.name === 'CommanderError') {
+    console.error(err.message);
     process.exit(1);
   }
   console.error('An unexpected error occurred:', err);
